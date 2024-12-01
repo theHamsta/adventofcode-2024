@@ -13,12 +13,16 @@ fn main() -> anyhow::Result<()> {
         list1.push(c[1].parse::<i64>().unwrap());
         list2.push(c[2].parse::<i64>().unwrap());
     }
-    let mut sort1= list1.clone();
-    let mut sort2= list2.clone();
+    let mut sort1 = list1.clone();
+    let mut sort2 = list2.clone();
     sort1.sort_unstable();
     sort2.sort_unstable();
 
-    let diff: i64 = sort1.iter().zip(sort2.iter()).map(|(a,b)| (a-b).abs()).sum();
+    let diff: i64 = sort1
+        .iter()
+        .zip(sort2.iter())
+        .map(|(a, b)| (a - b).abs())
+        .sum();
     println!("part1: {diff}");
 
     let mut sum = 0usize;
