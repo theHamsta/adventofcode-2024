@@ -1,0 +1,10 @@
+[package]
+name = "day-01"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow = "1.0.93"
+itertools = "0.13.0"
+num-integer = { version = "0.1.46", features = ["i128", "std"] }
+regex = "1.11.1"
