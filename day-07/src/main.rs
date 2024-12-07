@@ -8,7 +8,7 @@ use regex::Regex;
 use std::collections::HashMap;
 
 #[derive(Debug)]
-struct Caclculation {
+struct Calculation {
     result: i64,
     numbers: Vec<i64>,
 }
@@ -32,7 +32,7 @@ fn main() -> anyhow::Result<()> {
             let result = result.split(':').next().unwrap();
             let result = result.parse::<i64>().unwrap();
             let numbers = it.map(|n| n.parse().unwrap()).collect_vec();
-            Caclculation { result, numbers }
+            Calculation { result, numbers }
         })
         .collect_vec();
 
