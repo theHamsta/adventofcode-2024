@@ -7,16 +7,6 @@ use regex::Regex;
 #[allow(unused_imports)]
 use std::collections::HashMap;
 
-fn print_grid(grid: &[Vec<char>]) {
-    for y in 0..grid.len() {
-        for x in 0..grid[0].len() {
-            print!("{}", grid[y][x]);
-        }
-        println!();
-    }
-    println!();
-}
-
 #[derive(Debug)]
 struct Caclculation {
     result: i64,
@@ -52,17 +42,19 @@ fn main() -> anyhow::Result<()> {
             let mut perms =
                 repeat_n([Op::Add, Op::Mul].iter(), c.numbers.len() - 1).multi_cartesian_product();
 
-            perms.any(|p| {
-                let mut res = c.numbers[0];
-                for (op, n) in p.iter().zip(c.numbers[1..].iter())  {
-                    match op {
-                        Op::Add => res += n,
-                        Op::Mul => res *= n,
-                        _ => unreachable!(),
+            perms
+                .any(|p| {
+                    let mut res = c.numbers[0];
+                    for (op, n) in p.iter().zip(c.numbers[1..].iter()) {
+                        match op {
+                            Op::Add => res += n,
+                            Op::Mul => res *= n,
+                            _ => unreachable!(),
+                        }
                     }
-                }
-                res == c.result
-            }).then_some(c.result)
+                    res == c.result
+                })
+                .then_some(c.result)
         })
         .sum();
     dbg!(part1);
@@ -70,20 +62,22 @@ fn main() -> anyhow::Result<()> {
     let part2: i64 = input
         .iter()
         .filter_map(|c| {
-            let mut perms =
-                repeat_n([Op::Add, Op::Mul, Op::Cat].iter(), c.numbers.len() - 1).multi_cartesian_product();
+            let mut perms = repeat_n([Op::Add, Op::Mul, Op::Cat].iter(), c.numbers.len() - 1)
+                .multi_cartesian_product();
 
-            perms.any(|p| {
-                let mut res = c.numbers[0];
-                for (op, n) in p.iter().zip(c.numbers[1..].iter())  {
-                    match op {
-                        Op::Add => res += n,
-                        Op::Mul => res *= n,
-                        Op::Cat => res = format!("{res}{n}").parse().unwrap(),
+            perms
+                .any(|p| {
+                    let mut res = c.numbers[0];
+                    for (op, n) in p.iter().zip(c.numbers[1..].iter()) {
+                        match op {
+                            Op::Add => res += n,
+                            Op::Mul => res *= n,
+                            Op::Cat => res = format!("{res}{n}").parse().unwrap(),
+                        }
                     }
-                }
-                res == c.result
-            }).then_some(c.result)
+                    res == c.result
+                })
+                .then_some(c.result)
         })
         .sum();
     dbg!(part2);
