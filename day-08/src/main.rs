@@ -35,6 +35,11 @@ fn count_antinodes(
             let mut anti1 = *a;
             let mut anti2 = *b;
 
+            if !allow_repetitions {
+                anti1 = (anti1.0 - a_to_b.0, anti1.1 - a_to_b.1);
+                anti2 = (anti2.0 + a_to_b.0, anti2.1 + a_to_b.1);
+            }
+
             while anti1.0 >= 0
                 && anti1.0 < grid[0].len() as i64
                 && anti1.1 >= 0
