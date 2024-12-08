@@ -7,6 +7,7 @@ use regex::Regex;
 use std::collections::HashMap;
 use std::collections::HashSet;
 
+#[allow(dead_code)]
 fn print_grid(grid: &[Vec<char>]) {
     for y in 0..grid.len() {
         for x in 0..grid[0].len() {
