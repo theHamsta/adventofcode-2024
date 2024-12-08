@@ -115,16 +115,16 @@ fn main() -> anyhow::Result<()> {
     }
     print_grid(&marked_antinodes);
 
-    let mut part1 = 0i64;
+    let mut part2 = 0i64;
     for y in 0..grid.len() {
         for x in 0..grid[0].len() {
             if marked_antinodes[y][x] == '#' {
-                part1 += 1;
+                part2 += 1;
             }
         }
     }
 
-    dbg!(part1);
+    dbg!(part2);
 
     Ok(())
 }
