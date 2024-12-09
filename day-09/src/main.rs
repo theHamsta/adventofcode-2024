@@ -41,15 +41,15 @@ fn main() -> anyhow::Result<()> {
     });
     for is_part2 in [false, true] {
         let mut files = files.clone();
-        for space_idx in 0..spaces.len() {
+        for space in spaces.iter_mut() {
             let mut file_pos = files.len() - 1;
-            let mut space_size = spaces[space_idx].len();
+            let mut space_size = space.len();
             while space_size > 0 {
                 let last_file = &mut files[file_pos];
                 let file_size = last_file.orig_range.iter().len();
                 let to_compact = file_size - last_file.compacted;
 
-                if spaces[space_idx].start > last_file.orig_range.start {
+                if space.start > last_file.orig_range.start {
                     break;
                 }
 
@@ -66,20 +66,20 @@ fn main() -> anyhow::Result<()> {
                 last_file.compacted += move_size;
                 last_file
                     .compacted_positions
-                    .push((spaces[space_idx].start..(spaces[space_idx].start + move_size)).into());
+                    .push((space.start..(space.start + move_size)).into());
 
                 if last_file.compacted == file_size && file_pos > 0 {
                     file_pos -= 1;
                 }
 
-                spaces[space_idx].start += move_size;
-                space_size = spaces[space_idx].len();
+                space.start += move_size;
+                space_size = space.len();
             }
         }
         //dbg!(&files);
 
         //dbg!(&spaces);
-        let part1: i64 = files
+        let solution: i64 = files
             .iter()
             .enumerate()
             .map(|(id, f)| {
@@ -98,7 +98,7 @@ fn main() -> anyhow::Result<()> {
             })
             .sum();
 
-        dbg!(&part1);
+        dbg!(&solution);
     }
 
     //let regex = Regex::new(
