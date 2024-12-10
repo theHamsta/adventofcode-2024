@@ -1,6 +1,4 @@
-//#![feature(array_windows)]
 #![feature(new_range_api)]
-use core::range::Range;
 #[allow(unused_imports)]
 use itertools::Itertools;
 #[allow(unused_imports)]
