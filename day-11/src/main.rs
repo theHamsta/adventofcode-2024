@@ -49,7 +49,7 @@ fn main() -> anyhow::Result<()> {
 
     //print_grid(&grid);
 
-    let num_steps = 6;
+    let num_steps = 25;
 
     for _i in 0..num_steps {
         next.clear();
