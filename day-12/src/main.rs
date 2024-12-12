@@ -7,6 +7,7 @@ use std::collections::HashMap;
 #[allow(unused_imports)]
 use std::collections::HashSet;
 
+#[allow(dead_code)]
 fn print_grid(grid: &[Vec<char>]) {
     for y in 0..grid.len() {
         for x in 0..grid[0].len() {
@@ -27,7 +28,7 @@ fn main() -> anyhow::Result<()> {
         .map(|l| l.chars().collect_vec())
         .collect_vec();
 
-    print_grid(&grid);
+    //print_grid(&grid);
 
     let mut visited = HashSet::new();
     let mut areas = HashMap::<(i64, i64), HashSet<(i64, i64)>>::new();
