@@ -66,8 +66,8 @@ fn main() -> anyhow::Result<()> {
     }
 
     let part1: i64 = areas
-        .iter()
-        .map(|(k, v)| {
+        .values()
+        .map(|v| {
             let area = v.len();
             let mut peri = 0i64;
             for pixel in v.iter() {
@@ -86,8 +86,8 @@ fn main() -> anyhow::Result<()> {
     dbg!(&part1);
 
     let part2: i64 = areas
-        .iter()
-        .map(|(k, v)| {
+        .values()
+        .map(|v| {
             let area = v.len();
             let mut peri_pixels = HashSet::new();
             for pixel in v.iter() {
