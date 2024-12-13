@@ -37,33 +37,9 @@ fn main() -> anyhow::Result<()> {
         _ => unreachable!(),
     });
 
-    dbg!(&a);
-    dbg!(&b);
-    dbg!(&prize);
-
     let mut costs = Vec::new();
 
     for i in 0..a.len() {
-        //let mut todo = BinaryHeap::new();
-        //todo.push(Reverse((0i64, 0i64, 0i64)));
-
-        //dbg!(&i);
-        //let mut steps = 0;
-        //while let Some(Reverse((cost, px, py))) = todo.pop() {
-        //dbg!(&px,&py);
-        //if px == prize[i] {
-        //}
-        //if (px, py) == prize[i] {
-        //costs.push(cost);
-        //break;
-        //}
-        //todo.push(Reverse((3 + cost, px + a[i].0, py + a[i].1)));
-        //todo.push(Reverse((1 + cost, px + b[i].0, py + b[i].1)));
-        //steps+=1;
-        //if steps == 1000 {
-        //break;
-        //}
-        //}
         costs.push(
             repeat_n(0i64..100, 2)
                 .multi_cartesian_product()
