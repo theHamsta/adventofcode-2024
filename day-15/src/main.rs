@@ -8,6 +8,8 @@ use std::collections::HashMap;
 #[allow(unused_imports)]
 use std::collections::HashSet;
 use std::process::exit;
+use std::thread::sleep;
+use std::time::Duration;
 
 fn print_grid(grid: &[Vec<char>], pos: (i64, i64)) {
     for y in 0..grid.len() {
@@ -129,8 +131,10 @@ fn solve(board: &[Vec<char>], movement: &str, debug: bool) -> i64 {
                 print_grid(&board, pos);
                 exit(1);
             }
-            //println!("{} {}/{}", mov, step, movement.len());
-            //print_grid(&board, pos);
+            println!("\x1B[2J\x1B[H");
+            println!("{} {}/{}", mov, step, movement.len());
+            print_grid(&board, pos);
+            sleep(Duration::from_millis(1));
         }
     }
     //print_grid(&board, pos);
