@@ -64,28 +64,29 @@ fn main() -> anyhow::Result<()> {
                 (dirx, diry) if dirx == -dx && diry == -dy => 2001,
                 _ => 1001,
             };
+            let new_cost = cost + cost_inc;
             match visited.entry((nx, ny, dx, dy)) {
                 std::collections::hash_map::Entry::Occupied(mut occupied_entry) => {
                     let (other_cost, p): &mut (i64, Vec<(i64, i64, i64, i64)>) =
                         occupied_entry.get_mut();
-                    if *other_cost == cost + cost_inc {
+                    if *other_cost == new_cost {
                         p.push((x, y, dirx, diry));
-                        heap.push(Reverse((cost + cost_inc, nx, ny, dx, dy)));
+                        heap.push(Reverse((new_cost, nx, ny, dx, dy)));
                     }
-                    if *other_cost > cost + cost_inc {
-                        *other_cost = cost + cost_inc;
+                    if *other_cost > new_cost {
+                        *other_cost = new_cost;
                         *p = vec![(x, y, dirx, diry)];
-                        heap.push(Reverse((cost + cost_inc, nx, ny, dx, dy)));
+                        heap.push(Reverse((new_cost, nx, ny, dx, dy)));
                     }
                 }
                 std::collections::hash_map::Entry::Vacant(vacant_entry) => {
-                    vacant_entry.insert((cost + cost_inc, vec![(x, y, dirx, diry)]));
-                    heap.push(Reverse((cost + cost_inc, nx, ny, dx, dy)));
+                    vacant_entry.insert((new_cost, vec![(x, y, dirx, diry)]));
+                    heap.push(Reverse((new_cost, nx, ny, dx, dy)));
                 }
             }
-            if neighbor == 'E' && cost + cost_inc <= end_cost {
+            if neighbor == 'E' && new_cost <= end_cost {
                 end_paths.push((nx, ny, dx, dy));
-                end_cost = cost + cost_inc;
+                end_cost = new_cost;
             }
         }
     }
