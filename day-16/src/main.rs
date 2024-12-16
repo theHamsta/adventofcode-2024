@@ -69,9 +69,6 @@ fn main() -> anyhow::Result<()> {
                     let (other_cost, p): &mut (i64, Vec<(i64, i64, i64, i64)>) =
                         occupied_entry.get_mut();
                     if *other_cost == cost + cost_inc {
-                        //dbg!(&"dsa");
-                        //*other_cost = cost + cost_inc;
-                        //*p = (x, y, dirx, diry);
                         p.push((x, y, dirx, diry));
                         heap.push(Reverse((cost + cost_inc, nx, ny, dx, dy)));
                     }
