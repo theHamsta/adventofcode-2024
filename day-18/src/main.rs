@@ -83,7 +83,7 @@ fn main() -> anyhow::Result<()> {
         }
     }
 
-    let part1 = visited[&end_pos];
+    let part1 = visited[&end_pos].0;
     dbg!(&part1);
 
     let first_blocked_step = (0..coords.len()).find(|i| {
