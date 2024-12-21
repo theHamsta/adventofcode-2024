@@ -179,9 +179,9 @@ fn main() -> anyhow::Result<()> {
     let (cost, _state) = translate(b"AA", b"029A", &num_to_dir, &dir_to_dir, 1, &mut cache);
     assert_eq!(cost, ground_truth as i64);
 
-    let mut sum = 0i64;
     let mut cache = HashMap::new();
     for num_recursions in [2, 25] {
+        let mut sum = 0i64;
         for seq in input.iter() {
             let (cost, _) = translate(
                 &b"AAAAAAAAAAAAAAAAAAAAAAAAAA"[..=(num_recursions as usize)],
