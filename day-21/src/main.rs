@@ -20,22 +20,7 @@ fn print_grid(grid: &[Vec<char>]) {
     println!();
 }
 
-#[allow(dead_code)]
-fn translate(numbers: &[u8], state_table: &HashMap<(u8, u8), Vec<u8>>) -> Vec<u8> {
-    let mut rtn = vec![];
-    rtn.extend(state_table[&(b'A', numbers[0])].iter());
-    rtn.push(b'A');
-
-    for w in numbers.windows(2) {
-        let a = w[0];
-        let b = w[1];
-        rtn.extend(state_table[&(a, b)].iter());
-        rtn.push(b'A');
-    }
-    rtn
-}
-
-fn translate2(
+fn translate(
     state: &[u8],
     numbers: &[u8],
     state_table: &HashMap<(u8, u8), Vec<Vec<u8>>>,
@@ -66,7 +51,7 @@ fn translate2(
                 let (cost, state) = if recursions == 0 {
                     (transition.len() as i64, vec![])
                 } else {
-                    translate2(
+                    translate(
                         &state[1..],
                         transition,
                         recursion_state_table,
@@ -80,7 +65,7 @@ fn translate2(
                 assert!(state.len() as u32 == recursions);
                 let mut new_state = vec![numbers[0]];
                 new_state.extend(&state);
-                let (new_cost, new_state) = translate2(
+                let (new_cost, new_state) = translate(
                     &new_state,
                     &numbers[1..],
                     state_table,
@@ -188,17 +173,17 @@ fn main() -> anyhow::Result<()> {
 
     let mut cache = HashMap::new();
     let ground_truth = b"<A^A^^>AvvvA".len();
-    let (cost, _state) = translate2(b"A", b"029A", &num_to_dir, &dir_to_dir, 0, &mut cache);
+    let (cost, _state) = translate(b"A", b"029A", &num_to_dir, &dir_to_dir, 0, &mut cache);
     assert_eq!(cost, ground_truth as i64);
     let ground_truth = b"v<<A>>^A<A>AvA<^AA>A<vAAA>^A".len();
-    let (cost, _state) = translate2(b"AA", b"029A", &num_to_dir, &dir_to_dir, 1, &mut cache);
+    let (cost, _state) = translate(b"AA", b"029A", &num_to_dir, &dir_to_dir, 1, &mut cache);
     assert_eq!(cost, ground_truth as i64);
 
     let mut sum = 0i64;
     let mut cache = HashMap::new();
     for num_recursions in [2, 25] {
         for seq in input.iter() {
-            let (cost, _) = translate2(
+            let (cost, _) = translate(
                 &b"AAAAAAAAAAAAAAAAAAAAAAAAAA"[..=(num_recursions as usize)],
                 seq.as_bytes(),
                 &num_to_dir,
