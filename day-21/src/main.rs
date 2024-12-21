@@ -32,8 +32,8 @@ fn translate(
         //return (0i64, state.to_vec(), vec![]);
         return (0i64, state.to_vec());
     }
+
     let old_state = state;
-    //128962
     if let Some(rtn) = cost_cache.get(&(old_state.to_owned(), numbers.to_owned(), recursions)) {
         return rtn.clone();
     }
