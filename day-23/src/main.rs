@@ -64,7 +64,7 @@ fn main() -> anyhow::Result<()> {
             nodes.insert(c.2);
 
             for node in graph.keys() {
-                if nodes.clone().iter().all(|n| graph[*n].contains(node)) {
+                if nodes.iter().all(|n| graph[*n].contains(node)) {
                     nodes.insert(node);
                 }
             }
@@ -73,7 +73,7 @@ fn main() -> anyhow::Result<()> {
         })
         //.collect_vec();
         .max_by_key(|n| n.1);
-    let mut max_clique = max_clique.unwrap().0;
+    let max_clique = max_clique.unwrap().0;
     let part2 = max_clique.iter().sorted().join(",");
     dbg!(&part2);
 
