@@ -86,55 +86,6 @@ fn solve(
     )
 }
 
-fn calc_score(
-    permutations: &Vec<(usize, usize)>,
-    test_values: &Vec<(i64, i64, i64)>,
-    variables: &HashMap<String, bool>,
-    equations: &[Equation],
-    counts: (usize, usize, usize),
-) -> (bool, i64) {
-    let mut mut_equations = equations.to_owned();
-    let mut mut_variables = variables.clone();
-    let (count_x, count_y, count_z) = counts;
-    for &(a, b) in permutations.iter() {
-        //if mut_equation[a].result > mut_equation[b].result {
-        //return 0;
-        //}
-        let tmp = mut_equations[a].result.clone();
-        mut_equations[a].result = mut_equations[b].result.clone();
-        mut_equations[b].result = tmp;
-    }
-
-    let mut score = 0i64;
-    let mut solved = true;
-    for (x, y, z) in test_values.iter() {
-        for i in 0..count_x {
-            mut_variables.insert(format!("x{:02}", i), ((x >> i) & 1) != 0);
-        }
-        for i in 0..count_y {
-            mut_variables.insert(format!("y{:02}", i), ((y >> i) & 1) != 0);
-        }
-
-        let my_z = solve(&mut mut_variables, &mut_equations, count_z);
-        if my_z != Some(*z) {
-            //dbg!(&"cont");
-            solved = false;
-        }
-        if let Some(my_z) = my_z {
-            let part_score = (!(my_z ^ z) & ((1 << count_z) - 1)).count_ones();
-            //println!("{my_z:010b}");
-            //println!("{z:010b}");
-            //println!("{:010b}", !(my_z ^ z) & ((1 << count_z) - 1));
-            //println!("{}", part_score);
-            //println!();
-            score += part_score as i64;
-        } else {
-            return (false, -1);
-        }
-    }
-    (solved, score)
-}
-
 fn main() -> anyhow::Result<()> {
     let raw_input = include_str!("../input");
     //let raw_input = include_str!("../example2");
@@ -198,6 +149,7 @@ fn main() -> anyhow::Result<()> {
     writeln!(file, "}}").unwrap();
 
     // Now analyzing the graphviz
+    // find all zXX that are not (carry_i XOR (x_i XOR y_i))
 
     let vec = [
         ["gvw", "qjb"],
