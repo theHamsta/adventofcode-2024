@@ -46,7 +46,7 @@ fn solve(
     count_z: usize,
 ) -> Option<i64> {
     let values = variables;
-    let max_shuffles = 100;
+    let max_shuffles = 10000;
     let mut shuffles = 0;
 
     let mut todo_eqn = equations.to_owned();
