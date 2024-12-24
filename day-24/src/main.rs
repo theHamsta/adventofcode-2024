@@ -138,7 +138,7 @@ fn main() -> anyhow::Result<()> {
     }
     dbg!(&test_values);
 
-    let mut file = File::create("C:/tmp/foo.dot").unwrap();
+    let mut file = File::create("foo.dot").unwrap();
     writeln!(file, "digraph {{").unwrap();
     for (i, eq) in equations.iter().enumerate() {
         let op_name = format!("{:?}_{i}", &eq.op);
