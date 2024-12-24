@@ -1,5 +1,6 @@
 #[allow(unused_imports)]
 use itertools::Itertools;
+use std::io::Write;
 
 use rand::Rng;
 #[allow(unused_imports)]
@@ -8,6 +9,7 @@ use regex::Regex;
 use std::collections::HashMap;
 #[allow(unused_imports)]
 use std::collections::HashSet;
+use std::fs::File;
 
 use rand::seq::SliceRandom;
 use rand::thread_rng;
@@ -38,9 +40,13 @@ struct Equation {
     op: Op,
 }
 
-fn solve(variables: &mut HashMap<String, bool>, equations: &[Equation]) -> Option<i64> {
+fn solve(
+    variables: &mut HashMap<String, bool>,
+    equations: &[Equation],
+    count_z: usize,
+) -> Option<i64> {
     let values = variables;
-    let max_shuffles = 10;
+    let max_shuffles = 100;
     let mut shuffles = 0;
 
     let mut todo_eqn = equations.to_owned();
@@ -65,7 +71,7 @@ fn solve(variables: &mut HashMap<String, bool>, equations: &[Equation]) -> Optio
     }
     //dbg!(&values);
 
-    let count_z = values.keys().filter(|v| v.starts_with('z')).count();
+    //let count_z = values.keys().filter(|v| v.starts_with('z')).count();
     Some(
         (0..count_z)
             .flat_map(|i| {
@@ -78,6 +84,55 @@ fn solve(variables: &mut HashMap<String, bool>, equations: &[Equation]) -> Optio
             })
             .sum(),
     )
+}
+
+fn calc_score(
+    permutations: &Vec<(usize, usize)>,
+    test_values: &Vec<(i64, i64, i64)>,
+    variables: &HashMap<String, bool>,
+    equations: &[Equation],
+    counts: (usize, usize, usize),
+) -> (bool, i64) {
+    let mut mut_equations = equations.to_owned();
+    let mut mut_variables = variables.clone();
+    let (count_x, count_y, count_z) = counts;
+    for &(a, b) in permutations.iter() {
+        //if mut_equation[a].result > mut_equation[b].result {
+        //return 0;
+        //}
+        let tmp = mut_equations[a].result.clone();
+        mut_equations[a].result = mut_equations[b].result.clone();
+        mut_equations[b].result = tmp;
+    }
+
+    let mut score = 0i64;
+    let mut solved = true;
+    for (x, y, z) in test_values.iter() {
+        for i in 0..count_x {
+            mut_variables.insert(format!("x{:02}", i), ((x >> i) & 1) != 0);
+        }
+        for i in 0..count_y {
+            mut_variables.insert(format!("y{:02}", i), ((y >> i) & 1) != 0);
+        }
+
+        let my_z = solve(&mut mut_variables, &mut_equations, count_z);
+        if my_z != Some(*z) {
+            //dbg!(&"cont");
+            solved = false;
+        }
+        if let Some(my_z) = my_z {
+            let part_score = (!(my_z ^ z) & ((1 << count_z) - 1)).count_ones();
+            //println!("{my_z:010b}");
+            //println!("{z:010b}");
+            //println!("{:010b}", !(my_z ^ z) & ((1 << count_z) - 1));
+            //println!("{}", part_score);
+            //println!();
+            score += part_score as i64;
+        } else {
+            return (false, -1);
+        }
+    }
+    (solved, score)
 }
 
 fn main() -> anyhow::Result<()> {
@@ -113,14 +168,16 @@ fn main() -> anyhow::Result<()> {
 
     let mut rng = rand::thread_rng();
 
-    let part1 = solve(&mut variables.clone(), &equations);
-    dbg!(&part1);
-
     let count_x = variables.keys().filter(|v| v.starts_with('x')).count();
     let count_y = variables.keys().filter(|v| v.starts_with('y')).count();
+    let count_z = equations
+        .iter()
+        .map(|v| &v.result)
+        .filter(|v| v.starts_with('z'))
+        .count();
+    let part1 = solve(&mut variables.clone(), &equations, count_z);
+    dbg!(&part1);
 
-    let swapped_pairs = 4;
-    let total = equations.iter().permutations(swapped_pairs * 2).count();
     let mut test_values = Vec::new();
     for _ in 0..10 {
         let x = rng.gen_range(0..(1 << count_x));
@@ -130,49 +187,27 @@ fn main() -> anyhow::Result<()> {
     }
     dbg!(&test_values);
 
-    let mut mut_equation = equations.clone();
-    let mut mut_variables = variables.clone();
-    let eqn_len = equations.len();
-    'outer: for (i, c) in (0..eqn_len).permutations(swapped_pairs * 2).enumerate() {
-        //println!("{i}/{total}");
-        if i % 10000 == 0 {
-            println!("{i}/{total} {:.04}", i as f64 / total as f64);
-        }
-        mut_equation.clear();
-        mut_equation = equations.clone();
-        for pair in c.chunks(2) {
-            if mut_equation[pair[0]].result > mut_equation[pair[1]].result {
-                continue 'outer;
-            }
-            let tmp = mut_equation[pair[0]].result.clone();
-            mut_equation[pair[0]].result = mut_equation[pair[1]].result.clone();
-            mut_equation[pair[1]].result = tmp;
-        }
-
-        for (x, y, z) in test_values.iter() {
-            for i in 0..count_x {
-                mut_variables.insert(format!("x{:02}", i), ((x >> i) & 1) != 0);
-            }
-            for i in 0..count_x {
-                mut_variables.insert(format!("y{:02}", i), ((y >> i) & 1) != 0);
-            }
-
-            let my_z = solve(&mut mut_variables, &mut_equation);
-            if my_z != Some(*z) {
-                //dbg!(&"cont");
-                continue 'outer;
-            }
-        }
-        dbg!(&"found");
-
-        let part2 = c
-            .iter()
-            .map(|e| equations[*e].result.clone())
-            .sorted()
-            .join(",");
-        dbg!(&part2);
-        return Ok(());
+    let mut file = File::create("C:/tmp/foo.dot").unwrap();
+    writeln!(file, "digraph {{").unwrap();
+    for (i, eq) in equations.iter().enumerate() {
+        let op_name = format!("{:?}_{i}", &eq.op);
+        writeln!(file, "{} -> {op_name};", &eq.a).unwrap();
+        writeln!(file, "{} -> {op_name};", &eq.b).unwrap();
+        writeln!(file, "{op_name} -> {};", &eq.result).unwrap();
     }
+    writeln!(file, "}}").unwrap();
+
+    // Now analyzing the graphviz
+
+    let vec = [
+        ["gvw", "qjb"],
+        ["z15", "jgc"],
+        ["z22", "drg"],
+        ["jbp", "z35"],
+    ];
+
+    let part2 = vec.iter().flatten().sorted().join(",");
+    dbg!(&part2);
 
     Ok(())
 }
