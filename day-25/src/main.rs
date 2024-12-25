@@ -18,7 +18,6 @@ fn print_grid(grid: &[Vec<char>]) {
     println!();
 }
 
-
 fn main() -> anyhow::Result<()> {
     let raw_input = include_str!("../input");
     //let raw_input = include_str!("../example");
@@ -30,27 +29,25 @@ fn main() -> anyhow::Result<()> {
                 .map(|l| l.chars().collect_vec())
                 .collect_vec()
         })
-    .filter(|g| g.len() > 1)
+        .filter(|g| g.len() > 1)
         .collect_vec();
     dbg!(&grids.len());
 
-    let mut sum:i64 = 0;
-    for (a,b) in grids.iter().tuple_combinations() {
+    let mut sum: i64 = 0;
+    for (a, b) in grids.iter().tuple_combinations() {
         let mut overlap = false;
         for y in 0..a.len() {
             for x in 0..a[0].len() {
                 if a[y][x] == '#' && b[y][x] == '#' {
                     overlap = true;
                 }
-
             }
         }
         if !overlap {
-            sum +=1;
+            sum += 1;
         }
     }
     dbg!(&sum);
-
 
     Ok(())
 }
